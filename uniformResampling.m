@@ -1,4 +1,4 @@
-function [resampled_images,light_dir] = uniformResampling(path)
+function [resampled_images,light_dir] = uniformResampling(path,pointer)
 
 [vertices,~] = icosphere(4);
 f = textscan(fopen(strcat(path,'lightvec.txt')),'%f %f %f');
@@ -34,8 +34,8 @@ for i = 1:length(vertices)
             Io = Io + vertices(i,:)*light(index(j),:)'/denominator*src_images(:,:,index(j));
         end
         resampled_images(:,:,re_num) = Io;
-        if re_num == 416
-            disp(i);
+        if re_num == pointer && pointer ~= 1
+            disp(index(1));
         end
         re_num = re_num + 1;
     end
