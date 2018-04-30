@@ -11,32 +11,38 @@ for i = 1:m
     end
 end
 
-pointer = 0;
-max = 0;
+kL = zeros(num_img,1);
+rL = zeros(num_img,1);
 L = 0.7*num_img;
 H = 0.9*num_img;
 
 for i = 1:num_img
     count = 0;
+    total_rank = 0;
     for x = 1:m
         for y = 1:n
             s = img_ranks(x,y,i);
-            if s>L && s<H
+            if s>L
                 count = count+1;
+                total_rank = total_rank + s;
             end
         end
     end
-    if count>max
-        pointer = i;
-        max = count;
-    end
+    kL(i) = count;
+    rL(i) = total_rank/count;
 end
 
-disp(pointer);
-deno_img = images(:,:,pointer);
-images(:,:,pointer) = [];
-deno_light = light_dir(pointer,:);
-light_dir(pointer,:) = [];
+[~,idx] = sort(kL);
+for i = 1:length(idx)
+    if rL(idx(length(idx)-i+1))<H
+        deno_img = images(:,:,idx(length(idx)-i+1));
+        images(:,:,idx(length(idx)-i+1)) = [];
+        deno_light = light_dir(idx(length(idx)-i+1),:);
+        light_dir(idx(length(idx)-i+1),:) = [];
+        disp(idx(length(idx)-i+1));
+        break;
+    end
+end
 
 normal = zeros(m,n,3);
 
